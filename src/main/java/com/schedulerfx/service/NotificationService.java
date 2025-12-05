@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.schedulerfx.model.Event;
+import com.schedulerfx.model.t2_schedule;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -18,7 +18,7 @@ public class NotificationService {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Map<Long, ScheduledFuture<?>> jobs = new ConcurrentHashMap<>();
 
-    public void schedule(Event e) {
+    public void schedule(t2_schedule e) {
         cancel(e.getId());
         LocalDateTime fireAt = e.getStartAt().minusMinutes(e.getRemindMinutes());
         long delayMs = Duration.between(LocalDateTime.now(), fireAt).toMillis();

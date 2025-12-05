@@ -1,6 +1,6 @@
 package com.schedulerfx.ui;
 
-import com.schedulerfx.model.Event;
+import com.schedulerfx.model.t2_schedule;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 public class CalendarView extends GridPane {
 
     private final Consumer<LocalDate> onAddRequest;
-    private final Consumer<Event> onEditRequest;
-    private final Consumer<Event> onDeleteRequest;
+    private final Consumer<t2_schedule> onEditRequest;
+    private final Consumer<t2_schedule> onDeleteRequest;
 
     public CalendarView(Consumer<LocalDate> onAddRequest,
-                        Consumer<Event> onEditRequest,
-                        Consumer<Event> onDeleteRequest) {
+                        Consumer<t2_schedule> onEditRequest,
+                        Consumer<t2_schedule> onDeleteRequest) {
         this.onAddRequest = onAddRequest;
         this.onEditRequest = onEditRequest;
         this.onDeleteRequest = onDeleteRequest;
@@ -29,11 +29,11 @@ public class CalendarView extends GridPane {
         setPadding(new Insets(5));
     }
 
-    public void setMonth(YearMonth month, List<Event> events) {
+    public void setMonth(YearMonth month, List<t2_schedule> events) {
         getChildren().clear();
 
         // 날짜별로 이벤트 묶기
-        Map<LocalDate, List<Event>> byDate =
+        Map<LocalDate, List<t2_schedule>> byDate =
                 events.stream()
                       .collect(Collectors.groupingBy(e -> e.getStartAt().toLocalDate()));
 
@@ -46,7 +46,7 @@ public class CalendarView extends GridPane {
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 7; col++) {
                 LocalDate date = cursor;
-                List<Event> dayEvents = byDate.getOrDefault(date, List.of());
+                List<t2_schedule> dayEvents = byDate.getOrDefault(date, List.of());
 
                 DayCell cell = new DayCell(
                         date,

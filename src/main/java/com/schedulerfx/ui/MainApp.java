@@ -14,14 +14,14 @@ import java.time.YearMonth;
 import java.util.List;
 
 import com.schedulerfx.dao.EventDao;
-import com.schedulerfx.dao.SqliteEventDao;
-import com.schedulerfx.model.Event;
+import com.schedulerfx.dao.MySqlEventDao;
+import com.schedulerfx.model.t2_schedule;
 import com.schedulerfx.service.NotificationService;
 
 public class MainApp extends Application {
 
     private YearMonth currentMonth = YearMonth.now();
-    private final EventDao eventDao = new SqliteEventDao("scheduler.db");
+    private final EventDao eventDao = new MySqlEventDao();
     private final NotificationService notifier = new NotificationService();
 
     private CalendarView calendarView;
@@ -51,10 +51,25 @@ public class MainApp extends Application {
             refresh();
         });
         
+        // 카테고리 뷰
+        Button statsBtn = new Button("통계");
+        statsBtn.setOnAction(e -> {
+
+            Stage statsStage = new Stage();
+            statsStage.setTitle("카테고리 통계");
+            
+            Scene statsScene = new Scene(new StatsView(), 600, 500);
+            statsStage.setScene(statsScene);
+            
+            statsStage.initOwner(stage);
+            
+            statsStage.show();
+        });
+        
         HBox top = new HBox(10, prev, monthLabel, next,  
                 new Label("연:"), yearSpinner,
                 new Label("월:"), monthSpinner,
-                go);
+                go, statsBtn);
         top.setPadding(new Insets(10));
 
         calendarView = new CalendarView(
@@ -62,7 +77,7 @@ public class MainApp extends Application {
         	    date -> {
         	        EventDialog dialog = new EventDialog(stage, date);
         	        dialog.showAndWait().ifPresent(newEvent -> {
-        	            Event saved = eventDao.insert(newEvent);
+        	        	t2_schedule saved = eventDao.insert(newEvent);
         	            notifier.schedule(saved);
         	            refresh();
         	        });
@@ -98,7 +113,7 @@ public class MainApp extends Application {
         stage.show();
 
         // 앱 시작 시 이번 달 일정 알림 재등록
-        List<Event> events = eventDao.findByMonth(currentMonth);
+        List<t2_schedule> events = eventDao.findByMonth(currentMonth);
         events.forEach(notifier::schedule);
     }
 

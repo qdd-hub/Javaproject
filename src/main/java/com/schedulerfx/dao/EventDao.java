@@ -5,16 +5,16 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
-import com.schedulerfx.model.Event;
+import com.schedulerfx.model.t2_schedule;
 
 public interface EventDao {
 	
-    Event insert(Event e);
+	t2_schedule insert(t2_schedule e);
     void delete(long id);
-    void update(Event e);
+    void update(t2_schedule e);
     
-    List<Event> findByDate(LocalDate date);
-    List<Event> findByMonth(YearMonth month);
+    List<t2_schedule> findByDate(LocalDate date);
+    List<t2_schedule> findByMonth(YearMonth month);
     
     // 시각화용 카테고리
     Map<String, Integer> getCategoryStats();

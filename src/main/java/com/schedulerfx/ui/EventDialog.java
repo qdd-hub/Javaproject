@@ -11,18 +11,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import com.schedulerfx.model.Event;
+import com.schedulerfx.model.t2_schedule;
 
-public class EventDialog extends Dialog<Event> {
+public class EventDialog extends Dialog<t2_schedule> {
 
     private final LocalDate baseDate;
-    private final Event original; // null이면 새 일정, 아니면 수정
+    private final t2_schedule original; // null이면 새 일정, 아니면 수정
 
     public EventDialog(Stage owner, LocalDate defaultDate) {
         this(owner, defaultDate, null);
     }
 
-    public EventDialog(Stage owner, LocalDate defaultDate, Event original) {
+    public EventDialog(Stage owner, LocalDate defaultDate, t2_schedule original) {
         this.baseDate = defaultDate;
         this.original = original;
 
@@ -115,7 +115,7 @@ public class EventDialog extends Dialog<Event> {
             
             String category = categoryCombo.getValue();
 
-            Event result = new Event(text, startAt, null, category,remind);
+            t2_schedule result = new t2_schedule(text, startAt, null, category,remind);
             if (original != null) {
                 result.setId(original.getId()); // update용
             }

@@ -5,7 +5,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.schedulerfx.model.Event;
+import com.schedulerfx.model.t2_schedule;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
@@ -21,15 +21,15 @@ public class DayCell extends VBox {
     private final LocalDate date;
     private final YearMonth shownMonth;
     private final Consumer<LocalDate> onAddRequest;
-    private final Consumer<Event> onEditRequest;
-    private final Consumer<Event> onDeleteRequest;
+    private final Consumer<t2_schedule> onEditRequest;
+    private final Consumer<t2_schedule> onDeleteRequest;
 
     public DayCell(LocalDate date,
                    YearMonth shownMonth,
-                   List<Event> events,
+                   List<t2_schedule> events,
                    Consumer<LocalDate> onAddRequest,
-                   Consumer<Event> onEditRequest,
-                   Consumer<Event> onDeleteRequest) {
+                   Consumer<t2_schedule> onEditRequest,
+                   Consumer<t2_schedule> onDeleteRequest) {
 
         this.date = date;
         this.shownMonth = shownMonth;
@@ -67,7 +67,7 @@ public class DayCell extends VBox {
         scroll.setPrefViewportHeight(80);
 
         // 이벤트 라벨들 생성
-        for (Event e : events) {
+        for (t2_schedule e : events) {
             Label ev = new Label(e.getStartAt().toLocalTime().toString() + " " + e.getTitle());
             ev.setStyle("-fx-background-color: white; -fx-border-color: #888; -fx-padding: 2 3 2 3;");
 
