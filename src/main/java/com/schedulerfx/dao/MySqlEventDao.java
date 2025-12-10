@@ -179,16 +179,17 @@ public class MySqlEventDao implements EventDao {
     
     // 기간 별 통계
     @Override
-    public Map<String, Integer> getCategoryStatsByDate(LocalDateTime startDate) {
+    public Map<String, Integer> getCategoryStatsByDate(LocalDateTime startDate, LocalDateTime now) {
         Map<String, Integer> stats = new HashMap<>();
         String sql = "SELECT category, COUNT(*) as count FROM t2_schedule " +
-                     "WHERE start_at >= ? " + 
+                     "WHERE start_at >= ? AND start_at <= ? " + 
                      "GROUP BY category";
 
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setObject(1, startDate);
+            ps.setObject(2, now);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while(rs.next()) {

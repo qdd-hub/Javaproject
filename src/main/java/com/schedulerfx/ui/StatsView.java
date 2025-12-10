@@ -25,6 +25,11 @@ public class StatsView extends VBox {
     private PieChart pieChart;
     private TextArea adviceBox;
     private ObservableList<PieChart.Data> chartData;
+    
+    // AI 조언 요청 시 필요한 데이터
+    private Map<String, Integer> currentStats; 
+    private String currentPeriod;
+    private Button aiAdviceBtn;
 
     public StatsView() {
         // 1. 화면 기본 설정
@@ -59,12 +64,20 @@ public class StatsView extends VBox {
         Label adviceTitle = new Label("💡 AI의 조언:");
         adviceTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2980b9;");
         
-        adviceBox = new TextArea("기간을 선택하면 분석을 시작합니다...");
+        //버튼
+        this.aiAdviceBtn = new Button("AI 조언 받기"); 
+        this.aiAdviceBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;");
+        this.aiAdviceBtn.setDisable(true); // 통계 로드 전까지 비활성화
+        
+        adviceBox = new TextArea("기간을 선택하고 버튼을 클릭하면 분석을 시작합니다...");
         adviceBox.setWrapText(true);
         adviceBox.setEditable(false);
         adviceBox.setPrefRowCount(3);
         adviceBox.setMaxWidth(450);
         adviceBox.setStyle("-fx-control-inner-background: #f8f9fa; -fx-font-family: 'Malgun Gothic'; -fx-font-size: 13px;");
+        
+        HBox adviceControlBox = new HBox(10, adviceTitle, aiAdviceBtn);
+        adviceControlBox.setAlignment(Pos.CENTER_LEFT);
 
         // 5. 닫기 버튼
         Button closeBtn = new Button("닫기");
@@ -75,9 +88,17 @@ public class StatsView extends VBox {
             String selected = periodComboBox.getValue();
             updateStats(selected); 
         });
+        
+        this.aiAdviceBtn.setOnAction(e -> {
+            if (currentStats != null && !currentStats.isEmpty()) {
+                loadAiAdvice(currentStats, adviceBox, currentPeriod);
+            } else {
+                 adviceBox.setText("AI 분석을 위한 통계 데이터가 없습니다.");
+            }
+        });
 
         // 화면 추가
-        this.getChildren().addAll(titleLabel, controlBox, pieChart, adviceTitle, adviceBox, closeBtn);
+        this.getChildren().addAll(titleLabel, controlBox, pieChart, adviceControlBox, adviceBox, closeBtn);
 
         // 기본값 1개월 로딩
         updateStats("최근 1개월");
@@ -86,7 +107,9 @@ public class StatsView extends VBox {
     // 화면 갱신 메서드
     private void updateStats(String period) {
         chartData.clear(); // 기존 차트 지우기
-        adviceBox.setText("AI가 '" + period + "' 데이터를 분석 중입니다...");
+        adviceBox.setText("AI가 '" + period + "' 데이터를 분석할 준비가 되었습니다.");
+        this. aiAdviceBtn.setDisable(true);
+        this.currentPeriod = period;
 
         // 날짜 계산
         LocalDateTime startDate = null;
@@ -106,11 +129,14 @@ public class StatsView extends VBox {
         try {
             EventDao dao = new MySqlEventDao();
             // 기간별 조회
-            stats = dao.getCategoryStatsByDate(startDate);
+            stats = dao.getCategoryStatsByDate(startDate, now);
+            
+            this.currentStats = stats;
 
             if (stats.isEmpty()) {
                 chartData.add(new PieChart.Data("데이터 없음", 1));
                 adviceBox.setText("이 기간에는 완료된 일정이 없습니다.");
+                aiAdviceBtn.setDisable(true);
                 return; // 데이터 없으면 AI 호출 안함
             }
 
@@ -120,11 +146,13 @@ public class StatsView extends VBox {
             }
 
             // AI 분석 시작
-            loadAiAdvice(stats, adviceBox, period);
+            adviceBox.setText("통계 데이터 로드가 완료되었습니다. 'AI 조언 받기' 버튼을 눌러 " + period + " 일정에 대한 분석을 시작하세요.");
+            aiAdviceBtn.setDisable(false);
 
         } catch (Exception e) {
             e.printStackTrace();
             adviceBox.setText("DB 오류가 발생했습니다.");
+            aiAdviceBtn.setDisable(true);
         }
     }
 

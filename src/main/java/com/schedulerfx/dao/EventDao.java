@@ -20,5 +20,5 @@ public interface EventDao {
     // 시각화용 카테고리
     Map<String, Integer> getCategoryStats();
     
-    Map<String, Integer> getCategoryStatsByDate(LocalDateTime startDate);
+    Map<String, Integer> getCategoryStatsByDate(LocalDateTime startDate, LocalDateTime now);
 }
