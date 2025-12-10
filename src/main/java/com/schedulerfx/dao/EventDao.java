@@ -1,6 +1,7 @@
 package com.schedulerfx.dao;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -18,4 +19,6 @@ public interface EventDao {
     
     // 시각화용 카테고리
     Map<String, Integer> getCategoryStats();
+    
+    Map<String, Integer> getCategoryStatsByDate(LocalDateTime startDate);
 }
